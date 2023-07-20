@@ -10,24 +10,36 @@ export class FortuneTellerService {
 
   private eventSource: EventSource | undefined;
   private sseDataSubject: Subject<string> = new Subject<string>();
-
+  private static retryCount = 0;
   constructor(private httpClient: HttpClient) {
   }
 
-  subscribeToFortuneTeller(): Observable<string> {
-    if (!this.eventSource) {
-      this.eventSource = new EventSource('http://localhost:8080/teller/notify');
-      console.log('creating event source');
-      this.eventSource.onmessage = event => {
-        console.log('received event', event)
-        this.sseDataSubject.next(event.data);
-      };
+  private connectToSSE() {
+    this.eventSource = new EventSource('http://localhost:8080/teller/notify');
+    console.log('creating event source');
+    this.eventSource.onmessage = event => {
+      console.log('received event', event)
+      this.sseDataSubject.next(event.data);
+    };
 
-      this.eventSource.onerror = error => {
+    this.eventSource.onerror = error => {
+      console.log('error', error);
+      if (FortuneTellerService.retryCount > 5) {
+        console.log('too many retries');
         this.sseDataSubject.error(error);
         this.eventSource!.close();
-      };
+        return;
+      }
+      FortuneTellerService.retryCount++;
+      this.sseDataSubject.error(error);
+      this.eventSource!.close();
+      this.connectToSSE();
+    };
 
+  }
+  subscribeToFortuneTeller(): Observable<string> {
+    if (!this.eventSource) {
+      this.connectToSSE();
     }
     return this.sseDataSubject.asObservable();
   }
