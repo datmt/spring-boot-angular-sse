@@ -24,7 +24,7 @@ public class FortuneTellerController {
 
     @GetMapping("/subscribe/{subscriberId}")
     public SseEmitter streamSse(@PathVariable String subscriberId) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(3_600_000L); // 1 hour
         logger.info("Emitter created with timeout {} for subscriberId {}", emitter.getTimeout(), subscriberId);
         SseEmitterManager.addEmitter(subscriberId, emitter);
 
