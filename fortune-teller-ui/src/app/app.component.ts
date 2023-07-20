@@ -25,9 +25,9 @@ export class AppComponent implements OnInit {
     this.fortuneTellerService.subscribeToFortuneTeller().subscribe({
       next: (fortune) => {
         this.waitingForResult = false;
-        this.fortuneResult = fortune;
+        console.log('received fortune', fortune)
+        this.fortuneResult = fortune.content;
         this.cd.detectChanges();
-        console.log('received fortune', this.fortuneResult);
       },
       error: (err) => {
         console.log(err);

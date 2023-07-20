@@ -1,5 +1,6 @@
 package com.damt.fortunetellerserver;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class SseEmitterManager {
             return;
         }
         try {
-            emitter.send(data);
+            emitter.send(new SimpleResponse(data), MediaType.APPLICATION_JSON);
         } catch (IOException e) {
             logger.warning("Error sending event to client: " + e.getMessage());
         }

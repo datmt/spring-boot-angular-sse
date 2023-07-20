@@ -10,7 +10,7 @@ import {v4 as uuid} from 'uuid';
 export class FortuneTellerService {
 
   private eventSource: EventSource | undefined;
-  private sseDataSubject: Subject<string> = new Subject<string>();
+  private sseDataSubject: Subject<SimpleResponse> = new Subject<SimpleResponse>();
   private static retryCount = 0;
   private static readonly MAX_RETRIES = 5;
   //generate unique id for each subscriber
@@ -23,7 +23,7 @@ export class FortuneTellerService {
     console.log('creating event source');
     this.eventSource.onmessage = event => {
       console.log('received event', event)
-      this.sseDataSubject.next(event.data);
+      this.sseDataSubject.next(JSON.parse(event.data));
     };
 
     this.eventSource.onerror = error => {
@@ -41,7 +41,7 @@ export class FortuneTellerService {
     };
 
   }
-  subscribeToFortuneTeller(): Observable<string> {
+  subscribeToFortuneTeller(): Observable<SimpleResponse> {
     if (!this.eventSource) {
       this.connectToSSE();
     }
