@@ -39,7 +39,8 @@ export class AppComponent implements OnInit {
     this.waitingForResult = true;
     this.fortuneTellerService.requestFortuneTeller(this.name).subscribe({
       next: waitText => {
-        this.waitText = waitText;
+        this.waitText = waitText.content;
+        this.cd.detectChanges();
       }
     })
   }

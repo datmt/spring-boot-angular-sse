@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, shareReplay, Subject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {SimpleResponse} from "./simple-response";
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,8 @@ export class FortuneTellerService {
     return this.sseDataSubject.asObservable();
   }
 
-  requestFortuneTeller(name: string): Observable<string> {
-    return this.httpClient.get<string>(`http://localhost:8080/teller/future/${name}`).pipe(shareReplay());
+  requestFortuneTeller(name: string): Observable<SimpleResponse> {
+    return this.httpClient.get<SimpleResponse>(`http://localhost:8080/teller/future/${name}`).pipe(shareReplay());
   }
 
 }
