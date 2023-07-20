@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class FortuneTellerService {
     private final Logger logger = Logger.getLogger(FortuneTellerService.class.getName());
     @Async
-    public void tellingFuture(String name) {
+    public void tellingFuture(String subscriberId, String name) {
         Random random = new Random();
         try {
             logger.info("Processing future for " + name);
@@ -20,6 +20,6 @@ public class FortuneTellerService {
         }
         logger.info("Finished processing future for " + name);
         String processedData =String.format("For %s percent certainty, %s will have a %s future!", random.nextInt(100), name, random.nextBoolean() ? "bright" : "dark");
-        SseEmitterManager.sendSseEventToClients(processedData);
+        SseEmitterManager.sendSseEventToClients(subscriberId, processedData);
     }
 }

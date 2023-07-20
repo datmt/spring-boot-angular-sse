@@ -38,7 +38,7 @@ Make sure you have the following installed on your system:
 To receive the prediction once it's ready, connect to the SSE endpoint:
 
 ```typescript
-const eventSource = new EventSource('http://localhost:8080/notify');
+const eventSource = new EventSource('http://localhost:8080/subscribe');
 
 eventSource.onmessage = event => {
 const prediction = event.data;

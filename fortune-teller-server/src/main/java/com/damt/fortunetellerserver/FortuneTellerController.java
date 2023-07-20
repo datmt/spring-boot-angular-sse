@@ -2,12 +2,8 @@ package com.damt.fortunetellerserver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/teller")
@@ -20,33 +16,34 @@ public class FortuneTellerController {
         this.fortuneTellerService = fortuneTellerService;
     }
 
-    @GetMapping("/future/{name}")
-    public SimpleResponse tellFuture(@PathVariable String name) {
-        fortuneTellerService.tellingFuture(name);
+    @GetMapping("/future/{name}/{subscriberId}")
+    public SimpleResponse tellFuture(@PathVariable String name, @PathVariable String subscriberId) {
+        fortuneTellerService.tellingFuture(subscriberId, name);
         return new SimpleResponse("Your future is being told!");
     }
 
-    @GetMapping("/notify")
-    public SseEmitter streamSse() {
+    @GetMapping("/subscribe/{subscriberId}")
+    public SseEmitter streamSse(@PathVariable String subscriberId) {
         SseEmitter emitter = new SseEmitter();
-        logger.info("Emitter created with timeout {}", emitter.getTimeout());
-        SseEmitterManager.addEmitter(emitter);
+        logger.info("Emitter created with timeout {} for subscriberId {}", emitter.getTimeout(), subscriberId);
+        SseEmitterManager.addEmitter(subscriberId, emitter);
 
         // Set a timeout for the SSE connection (optional)
         emitter.onTimeout(() -> {
             logger.info("Emitter timed out");
             emitter.complete();
-            SseEmitterManager.removeEmitter(emitter);
+            SseEmitterManager.removeEmitter(subscriberId);
         });
 
         // Set a handler for client disconnect (optional)
         emitter.onCompletion(() -> {
             logger.info("Emitter completed");
-            SseEmitterManager.removeEmitter(emitter);
+            SseEmitterManager.removeEmitter(subscriberId);
         });
 
         return emitter;
     }
 }
-record SimpleResponse (String content) {
+
+record SimpleResponse(String content) {
 }
