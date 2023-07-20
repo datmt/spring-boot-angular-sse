@@ -13,14 +13,15 @@ import java.util.concurrent.CompletableFuture;
 public class FortuneTellerController {
     private final FortuneTellerService fortuneTellerService;
 
+
     public FortuneTellerController(FortuneTellerService fortuneTellerService) {
         this.fortuneTellerService = fortuneTellerService;
     }
 
     @GetMapping("/future/{name}")
-    public ResponseEntity<String> tellFuture(@PathVariable String name) {
+    public SimpleResponse tellFuture(@PathVariable String name) {
         fortuneTellerService.tellingFuture(name);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Your future is being told!");
+        return new SimpleResponse("Your future is being told!");
     }
 
     @GetMapping("/notify")
@@ -36,4 +37,6 @@ public class FortuneTellerController {
 
         return emitter;
     }
+}
+record SimpleResponse (String content) {
 }
