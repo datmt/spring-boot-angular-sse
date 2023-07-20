@@ -32,8 +32,8 @@ Make sure you have the following installed on your system:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/fortune-teller-sse.git
-   cd fortune-teller-sse
+   git clone git@github.com:datmt/spring-boot-angular-sse.git
+   cd spring-boot-angular-sse
 
 To receive the prediction once it's ready, connect to the SSE endpoint:
 
